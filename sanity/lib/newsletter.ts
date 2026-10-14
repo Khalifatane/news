@@ -1,0 +1,5 @@
+import {defineQuery} from 'next-sanity'
+
+export const articleCardFields = `_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}`
+export const newsletterHomeQuery = defineQuery(`{"home": *[_type == "newsletterHome"][0]{_id, publicationName, latestCount, footerLinks, "categories": navigationCategories[]->{_id, title, "slug": slug.current}, "featured": featuredStories[]->{${articleCardFields}}, "secondary": secondaryStory->{${articleCardFields}}, "trending": trendingStories[]->{${articleCardFields}}}, "latest": *[_type == "article" && defined(slug.current)] | order(publishedAt desc)[0...12]{${articleCardFields}}, "categories": *[_type == "category"] | order(order asc, title asc){_id, title, "slug": slug.current}}`)
+export const articleQuery = defineQuery(`*[_type == "article" && slug.current == $slug][0]{${articleCardFields}, body[]{..., _type == "inlineImage" => {..., image{..., asset->{_id, url}}}}, seoTitle, seoDescription}`)
