@@ -55,6 +55,14 @@ export function CustomPortableText({
           </div>
         )
       },
+      inlineImage: ({value: image}) => (
+        <figure className="my-6 space-y-2">
+          <ImageBox image={image.image} alt={image.alt} classesWrapper="relative aspect-[16/9]" />
+          {image.caption && (
+            <figcaption className="font-sans text-sm text-gray-600">{image.caption}</figcaption>
+          )}
+        </figure>
+      ),
       timeline: ({value: timeline}) => {
         const {items, _key} = timeline
         return (

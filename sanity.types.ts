@@ -57,6 +57,131 @@ export type Milestone = {
   duration?: Duration;
 };
 
+export type CategoryReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "category";
+};
+
+export type AuthorReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "author";
+};
+
+export type Article = {
+  _id: string;
+  _type: "article";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  category?: CategoryReference;
+  author?: AuthorReference;
+  publishedAt?: string;
+  readingTime?: number;
+  coverImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  excerpt?: string;
+  body?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?: "normal" | "h2" | "blockquote";
+        listItem?: "bullet" | "number";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        image?: {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+        };
+        alt?: string;
+        caption?: string;
+        _type: "inlineImage";
+        _key: string;
+      }
+  >;
+  featured?: boolean;
+  trending?: boolean;
+  seoTitle?: string;
+  seoDescription?: string;
+};
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+};
+
+export type Author = {
+  _id: string;
+  _type: "author";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  bio?: string;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+};
+
+export type Category = {
+  _id: string;
+  _type: "category";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  order?: number;
+};
+
+export type Slug = {
+  _type: "slug";
+  current?: string;
+  source?: string;
+};
+
 export type Project = {
   _id: string;
   _type: "project";
@@ -125,32 +250,10 @@ export type Project = {
   >;
 };
 
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
-};
-
 export type Duration = {
   _type: "duration";
   start?: string;
   end?: string;
-};
-
-export type Slug = {
-  _type: "slug";
-  current?: string;
-  source?: string;
 };
 
 export type Page = {
@@ -238,6 +341,14 @@ export type Settings = {
   _updatedAt: string;
   _rev: string;
   menuItems?: ArrayOf<HomeReference | PageReference | ProjectReference>;
+  tickerEnabled?: boolean;
+  tickerItems?: Array<{
+    symbol?: string;
+    price?: string;
+    change?: string;
+    direction?: "up" | "down" | "neutral";
+    _key: string;
+  }>;
   footer?: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -398,11 +509,16 @@ export type AllSanitySchemaTypes =
   | Timeline
   | SanityImageAssetReference
   | Milestone
-  | Project
+  | CategoryReference
+  | AuthorReference
+  | Article
   | SanityImageCrop
   | SanityImageHotspot
-  | Duration
+  | Author
+  | Category
   | Slug
+  | Project
+  | Duration
   | Page
   | HomeReference
   | PageReference
@@ -487,8 +603,53 @@ export type SlugPageQueryResult = {
 // Variable: query
 // Query: {"category": *[_type == "category" && slug.current == $slug][0]{title}, "articles": *[_type == "article" && category->slug.current == $slug] | order(publishedAt desc){_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}}
 export type QueryResult = {
-  category: null;
-  articles: Array<never>;
+  category: {
+    title: string | null;
+  } | null;
+  articles: Array<{
+    _id: string;
+    title: string | null;
+    excerpt: string | null;
+    featured: boolean | null;
+    trending: boolean | null;
+    publishedAt: string | null;
+    readingTime: number | null;
+    slug: string | null;
+    coverImage: {
+      asset: {
+        _id: string;
+        url: string | null;
+        metadata: {
+          lqip: string | null;
+        } | null;
+      } | null;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    category: {
+      _id: string;
+      title: string | null;
+      slug: string | null;
+    } | null;
+    author: {
+      _id: string;
+      name: string | null;
+      image: {
+        asset: {
+          _id: string;
+          url: string | null;
+        } | null;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    } | null;
+  }>;
 };
 
 // Source: app/(website)/projects/[slug]/page.tsx
@@ -577,21 +738,202 @@ export type ProjectSlugPageQueryResult = {
 // Source: app/(website)/search/page.tsx
 // Variable: searchQuery
 // Query: *[_type == "article" && defined(slug.current) && (title match $term || excerpt match $term || pt::text(body) match $term)] | order(publishedAt desc)[0...30]{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}
-export type SearchQueryResult = Array<never>;
+export type SearchQueryResult = Array<{
+  _id: string;
+  title: string | null;
+  excerpt: string | null;
+  featured: boolean | null;
+  trending: boolean | null;
+  publishedAt: string | null;
+  readingTime: number | null;
+  slug: string | null;
+  coverImage: {
+    asset: {
+      _id: string;
+      url: string | null;
+      metadata: {
+        lqip: string | null;
+      } | null;
+    } | null;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  category: {
+    _id: string;
+    title: string | null;
+    slug: string | null;
+  } | null;
+  author: {
+    _id: string;
+    name: string | null;
+    image: {
+      asset: {
+        _id: string;
+        url: string | null;
+      } | null;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  } | null;
+}>;
 
 // Source: sanity/lib/newsletter.ts
 // Variable: newsletterHomeQuery
-// Query: {"home": *[_type == "newsletterHome"][0]{_id, publicationName, latestCount, footerLinks, "categories": navigationCategories[]->{_id, title, "slug": slug.current}, "featured": featuredStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "secondary": secondaryStory->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "trending": trendingStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}}, "latest": *[_type == "article" && defined(slug.current)] | order(publishedAt desc)[0...12]{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "categories": *[_type == "category"] | order(order asc, title asc){_id, title, "slug": slug.current}}
+// Query: {"home": *[_type == "newsletterHome"][0]{_id, publicationName, latestCount, footerLinks, "categories": navigationCategories[]->{_id, title, "slug": slug.current}, "featured": featuredStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "secondary": secondaryStory->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "trending": trendingStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}}, "settings": *[_type == "settings"][0]{tickerEnabled, "tickerItems": tickerItems[]{_key, symbol, price, change, direction}}, "latest": *[_type == "article" && defined(slug.current)] | order(publishedAt desc)[0...12]{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "categories": *[_type == "category"] | order(order asc, title asc){_id, title, "slug": slug.current}}
 export type NewsletterHomeQueryResult = {
   home: null;
-  latest: Array<never>;
-  categories: Array<never>;
+  settings: {
+    tickerEnabled: boolean | null;
+    tickerItems: Array<{
+      _key: string;
+      symbol: string | null;
+      price: string | null;
+      change: string | null;
+      direction: "down" | "neutral" | "up" | null;
+    }> | null;
+  } | null;
+  latest: Array<{
+    _id: string;
+    title: string | null;
+    excerpt: string | null;
+    featured: boolean | null;
+    trending: boolean | null;
+    publishedAt: string | null;
+    readingTime: number | null;
+    slug: string | null;
+    coverImage: {
+      asset: {
+        _id: string;
+        url: string | null;
+        metadata: {
+          lqip: string | null;
+        } | null;
+      } | null;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    category: {
+      _id: string;
+      title: string | null;
+      slug: string | null;
+    } | null;
+    author: {
+      _id: string;
+      name: string | null;
+      image: {
+        asset: {
+          _id: string;
+          url: string | null;
+        } | null;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    } | null;
+  }>;
+  categories: Array<{
+    _id: string;
+    title: string | null;
+    slug: string | null;
+  }>;
 };
 
 // Source: sanity/lib/newsletter.ts
 // Variable: articleQuery
 // Query: *[_type == "article" && slug.current == $slug][0]{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}, body[]{..., _type == "inlineImage" => {..., image{..., asset->{_id, url}}}}, seoTitle, seoDescription}
-export type ArticleQueryResult = null;
+export type ArticleQueryResult = {
+  _id: string;
+  title: string | null;
+  excerpt: string | null;
+  featured: boolean | null;
+  trending: boolean | null;
+  publishedAt: string | null;
+  readingTime: number | null;
+  slug: string | null;
+  coverImage: {
+    asset: {
+      _id: string;
+      url: string | null;
+      metadata: {
+        lqip: string | null;
+      } | null;
+    } | null;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  category: {
+    _id: string;
+    title: string | null;
+    slug: string | null;
+  } | null;
+  author: {
+    _id: string;
+    name: string | null;
+    image: {
+      asset: {
+        _id: string;
+        url: string | null;
+      } | null;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  } | null;
+  body: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?: "blockquote" | "h2" | "normal";
+        listItem?: "bullet" | "number";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        image: {
+          asset: {
+            _id: string;
+            url: string | null;
+          } | null;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+        } | null;
+        alt?: string;
+        caption?: string;
+        _type: "inlineImage";
+        _key: string;
+      }
+  > | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+} | null;
 
 // Source: sanity/lib/queries.ts
 // Variable: settingsQuery
@@ -662,7 +1004,7 @@ declare global {
     '\n    *[_type == "project" && slug.current == $slug][0] {\n      coverImage,\n      title,\n      "overview": pt::text(overview),\n    }\n  ': ProjectSlugPageMetadataQueryResult;
     '\n    *[_type == "project" && slug.current == $slug][0] {\n      _id,\n      _type,\n      client,\n      coverImage,\n      description,\n      duration,\n      overview,\n      site,\n      "slug": slug.current,\n      tags,\n      title,\n    }\n  ': ProjectSlugPageQueryResult;
     '*[_type == "article" && defined(slug.current) && (title match $term || excerpt match $term || pt::text(body) match $term)] | order(publishedAt desc)[0...30]{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}': SearchQueryResult;
-    '{"home": *[_type == "newsletterHome"][0]{_id, publicationName, latestCount, footerLinks, "categories": navigationCategories[]->{_id, title, "slug": slug.current}, "featured": featuredStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "secondary": secondaryStory->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "trending": trendingStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}}, "latest": *[_type == "article" && defined(slug.current)] | order(publishedAt desc)[0...12]{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "categories": *[_type == "category"] | order(order asc, title asc){_id, title, "slug": slug.current}}': NewsletterHomeQueryResult;
+    '{"home": *[_type == "newsletterHome"][0]{_id, publicationName, latestCount, footerLinks, "categories": navigationCategories[]->{_id, title, "slug": slug.current}, "featured": featuredStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "secondary": secondaryStory->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "trending": trendingStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}}, "settings": *[_type == "settings"][0]{tickerEnabled, "tickerItems": tickerItems[]{_key, symbol, price, change, direction}}, "latest": *[_type == "article" && defined(slug.current)] | order(publishedAt desc)[0...12]{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "categories": *[_type == "category"] | order(order asc, title asc){_id, title, "slug": slug.current}}': NewsletterHomeQueryResult;
     '*[_type == "article" && slug.current == $slug][0]{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}, body[]{..., _type == "inlineImage" => {..., image{..., asset->{_id, url}}}}, seoTitle, seoDescription}': ArticleQueryResult;
     '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": slug.current,\n        title\n      }\n    },\n    ogImage,\n  }\n': SettingsQueryResult;
     '\n  *[_type == $type && defined(slug.current)]{"slug": slug.current}\n': SlugsByTypeQueryResult;

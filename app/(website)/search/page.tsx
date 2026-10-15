@@ -6,8 +6,13 @@ import {sanityFetch} from '@/sanity/lib/live'
 import {articleCardFields, newsletterHomeQuery} from '@/sanity/lib/newsletter'
 const searchQuery = defineQuery(`*[_type == "article" && defined(slug.current) && (title match $term || excerpt match $term || pt::text(body) match $term)] | order(publishedAt desc)[0...30]{${articleCardFields}}`)
 export default async function SearchPage({searchParams}: PageProps<'/search'>) {
-  'use cache'
   const {q = ''} = await searchParams
+
+  return <SearchResults q={Array.isArray(q) ? q[0] ?? '' : q} />
+}
+
+async function SearchResults({q}: {q: string}) {
+  'use cache'
   const term = q ? `*${q}*` : '*'
   const [{data: articles}, {data: homeData}] = await Promise.all([
     sanityFetch({query: searchQuery, params: {term}, perspective: 'published', stega: false}),

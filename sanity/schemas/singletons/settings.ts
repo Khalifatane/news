@@ -33,6 +33,38 @@ export default defineType({
       ],
     }),
     defineField({
+      name: 'tickerEnabled',
+      title: 'Show market ticker',
+      description: 'Ticker figures are entered and maintained by editors; they are not live market data.',
+      type: 'boolean',
+      initialValue: true,
+    }),
+    defineField({
+      name: 'tickerItems',
+      title: 'Market ticker items',
+      description: 'Add the symbol, displayed price, change text, and direction for each ticker item.',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({name: 'symbol', title: 'Symbol', type: 'string', validation: (rule) => rule.required().max(100)}),
+            defineField({name: 'price', title: 'Displayed value', type: 'string', validation: (rule) => rule.required().max(250)}),
+            defineField({name: 'change', title: 'Change text', type: 'string', validation: (rule) => rule.required().max(100)}),
+            defineField({
+              name: 'direction',
+              title: 'Direction',
+              type: 'string',
+              options: {list: [{title: 'Up', value: 'up'}, {title: 'Down', value: 'down'}, {title: 'Unchanged', value: 'neutral'}], layout: 'radio'},
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: {select: {title: 'symbol', subtitle: 'change'}},
+        }),
+      ],
+      validation: (rule) => rule.max(24),
+    }),
+    defineField({
       name: 'footer',
       description: 'This is a block of text that will be displayed at the bottom of the page.',
       title: 'Footer Info',

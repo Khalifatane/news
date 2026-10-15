@@ -3,6 +3,8 @@ import Link from 'next/link'
 import {Suspense} from 'react'
 import {NewsletterImage} from '@/components/NewsletterImage'
 import {NewsletterFooter, NewsletterHeader} from '@/components/NewsletterShell'
+import {StoryMarquee} from '@/components/StoryMarquee'
+import {FinanceTicker} from '@/components/FinanceTicker'
 import {getDynamicFetchOptions, sanityFetch, type DynamicFetchOptions} from '@/sanity/lib/live'
 import {newsletterHomeQuery} from '@/sanity/lib/newsletter'
 
@@ -13,6 +15,7 @@ async function CachedHome({perspective, stega}: DynamicFetchOptions) {
   const {data} = await sanityFetch({query: newsletterHomeQuery, perspective, stega})
   const value: any = data || {}
   const home = value.home || {}
+  const tickerSettings = value.settings || {}
   const categories = Array.isArray(home.categories) ? home.categories.filter(Boolean) : Array.isArray(value.categories) ? value.categories : []
   const articles = Array.isArray(value.latest) && value.latest.length ? value.latest.filter(Boolean) : fallbackArticles
   const featured = Array.isArray(home.featured) && home.featured.filter(Boolean).length ? home.featured.filter(Boolean) : articles.slice(0, 3)
@@ -27,6 +30,7 @@ async function CachedHome({perspective, stega}: DynamicFetchOptions) {
     return (
       <>
         <NewsletterHeader name={publicationName} categories={categories} />
+        <FinanceTicker items={tickerSettings.tickerItems} enabled={tickerSettings.tickerEnabled} />
         <main className="newsletter-main">
           <section className="feature-grid">
             <div className="hero-copy">
@@ -43,6 +47,8 @@ async function CachedHome({perspective, stega}: DynamicFetchOptions) {
   return (
     <>
       <NewsletterHeader name={publicationName} categories={categories} />
+      <FinanceTicker items={tickerSettings.tickerItems} enabled={tickerSettings.tickerEnabled} />
+      <StoryMarquee stories={articles} />
       <main className="newsletter-main">
         <section className="feature-grid">
           <Link href={href(hero)} className="hero-card">
