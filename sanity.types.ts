@@ -124,6 +124,13 @@ export type Article = {
         _type: "inlineImage";
         _key: string;
       }
+    | {
+        url?: string;
+        caption?: string;
+        captionsUrl?: string;
+        _type: "videoEmbed";
+        _key: string;
+      }
   >;
   featured?: boolean;
   trending?: boolean;
@@ -247,6 +254,13 @@ export type Project = {
         _type: "image";
         _key: string;
       }
+    | {
+        url?: string;
+        caption?: string;
+        captionsUrl?: string;
+        _type: "videoEmbed";
+        _key: string;
+      }
   >;
 };
 
@@ -308,6 +322,13 @@ export type Page = {
         caption?: string;
         alt?: string;
         _type: "image";
+        _key: string;
+      }
+    | {
+        url?: string;
+        caption?: string;
+        captionsUrl?: string;
+        _type: "videoEmbed";
         _key: string;
       }
   >;
@@ -580,6 +601,13 @@ export type SlugPageQueryResult = {
         _type: "image";
         _key: string;
       }
+    | {
+        url?: string;
+        caption?: string;
+        captionsUrl?: string;
+        _type: "videoEmbed";
+        _key: string;
+      }
   > | null;
   overview: Array<{
     children?: Array<{
@@ -713,6 +741,13 @@ export type ProjectSlugPageQueryResult = {
         _type: "image";
         _key: string;
       }
+    | {
+        url?: string;
+        caption?: string;
+        captionsUrl?: string;
+        _type: "videoEmbed";
+        _key: string;
+      }
   > | null;
   duration: Duration | null;
   overview: Array<{
@@ -785,7 +820,7 @@ export type SearchQueryResult = Array<{
 
 // Source: sanity/lib/newsletter.ts
 // Variable: newsletterHomeQuery
-// Query: {"home": *[_type == "newsletterHome"][0]{_id, publicationName, latestCount, footerLinks, "categories": navigationCategories[]->{_id, title, "slug": slug.current}, "featured": featuredStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "secondary": secondaryStory->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "trending": trendingStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}}, "settings": *[_type == "settings"][0]{tickerEnabled, "tickerItems": tickerItems[]{_key, symbol, price, change, direction}}, "latest": *[_type == "article" && defined(slug.current)] | order(publishedAt desc)[0...12]{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "categories": *[_type == "category"] | order(order asc, title asc){_id, title, "slug": slug.current}}
+// Query: {"home": *[_type == "newsletterHome"][0]{_id, publicationName, heroTitle, heroSubtitle, heroLink, heroImage{..., asset->{_id, url, metadata{lqip}}}, latestCount, footerLinks, "categories": navigationCategories[]->{_id, title, "slug": slug.current}, "featured": featuredStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "secondary": secondaryStory->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "trending": trendingStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}}, "settings": *[_type == "settings"][0]{tickerEnabled, "tickerItems": tickerItems[]{_key, symbol, price, change, direction}}, "latest": *[_type == "article" && defined(slug.current)] | order(publishedAt desc)[0...12]{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "categories": *[_type == "category"] | order(order asc, title asc){_id, title, "slug": slug.current}}
 export type NewsletterHomeQueryResult = {
   home: null;
   settings: {
@@ -930,6 +965,13 @@ export type ArticleQueryResult = {
         _type: "inlineImage";
         _key: string;
       }
+    | {
+        url?: string;
+        caption?: string;
+        captionsUrl?: string;
+        _type: "videoEmbed";
+        _key: string;
+      }
   > | null;
   seoTitle: string | null;
   seoDescription: string | null;
@@ -1004,7 +1046,7 @@ declare global {
     '\n    *[_type == "project" && slug.current == $slug][0] {\n      coverImage,\n      title,\n      "overview": pt::text(overview),\n    }\n  ': ProjectSlugPageMetadataQueryResult;
     '\n    *[_type == "project" && slug.current == $slug][0] {\n      _id,\n      _type,\n      client,\n      coverImage,\n      description,\n      duration,\n      overview,\n      site,\n      "slug": slug.current,\n      tags,\n      title,\n    }\n  ': ProjectSlugPageQueryResult;
     '*[_type == "article" && defined(slug.current) && (title match $term || excerpt match $term || pt::text(body) match $term)] | order(publishedAt desc)[0...30]{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}': SearchQueryResult;
-    '{"home": *[_type == "newsletterHome"][0]{_id, publicationName, latestCount, footerLinks, "categories": navigationCategories[]->{_id, title, "slug": slug.current}, "featured": featuredStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "secondary": secondaryStory->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "trending": trendingStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}}, "settings": *[_type == "settings"][0]{tickerEnabled, "tickerItems": tickerItems[]{_key, symbol, price, change, direction}}, "latest": *[_type == "article" && defined(slug.current)] | order(publishedAt desc)[0...12]{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "categories": *[_type == "category"] | order(order asc, title asc){_id, title, "slug": slug.current}}': NewsletterHomeQueryResult;
+    '{"home": *[_type == "newsletterHome"][0]{_id, publicationName, heroTitle, heroSubtitle, heroLink, heroImage{..., asset->{_id, url, metadata{lqip}}}, latestCount, footerLinks, "categories": navigationCategories[]->{_id, title, "slug": slug.current}, "featured": featuredStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "secondary": secondaryStory->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "trending": trendingStories[]->{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}}, "settings": *[_type == "settings"][0]{tickerEnabled, "tickerItems": tickerItems[]{_key, symbol, price, change, direction}}, "latest": *[_type == "article" && defined(slug.current)] | order(publishedAt desc)[0...12]{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}}, "categories": *[_type == "category"] | order(order asc, title asc){_id, title, "slug": slug.current}}': NewsletterHomeQueryResult;
     '*[_type == "article" && slug.current == $slug][0]{_id, title, excerpt, featured, trending, publishedAt, readingTime, "slug": slug.current, coverImage{..., asset->{_id, url, metadata{lqip}}}, category->{_id, title, "slug": slug.current}, author->{_id, name, image{..., asset->{_id, url}}}, body[]{..., _type == "inlineImage" => {..., image{..., asset->{_id, url}}}}, seoTitle, seoDescription}': ArticleQueryResult;
     '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": slug.current,\n        title\n      }\n    },\n    ogImage,\n  }\n': SettingsQueryResult;
     '\n  *[_type == $type && defined(slug.current)]{"slug": slug.current}\n': SlugsByTypeQueryResult;

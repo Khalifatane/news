@@ -1,6 +1,7 @@
 import {DocumentIcon} from '@sanity/icons/Document'
 import {ImageIcon} from '@sanity/icons/Image'
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {videoEmbed} from '@/sanity/schemas/objects/videoEmbed'
 
 export default defineType({
   type: 'document',
@@ -113,6 +114,7 @@ export default defineType({
             }),
           ],
         }),
+        videoEmbed,
       ],
     }),
   ],

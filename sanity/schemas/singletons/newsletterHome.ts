@@ -4,7 +4,11 @@ import {defineArrayMember, defineField, defineType} from 'sanity'
 export default defineType({
   name: 'newsletterHome', title: 'Newsletter Homepage', type: 'document', icon: HomeIcon,
   fields: [
-    defineField({name: 'publicationName', title: 'Publication name', type: 'string', initialValue: 'NEWSLETTER', validation: (rule) => rule.required()}),
+    defineField({name: 'publicationName', title: 'Publication name', type: 'string', initialValue: 'Sunu Ndar', validation: (rule) => rule.required()}),
+    defineField({name: 'heroTitle', title: 'Hero title', type: 'string', initialValue: 'Sunu Ndar'}),
+    defineField({name: 'heroSubtitle', title: 'Hero subtitle', type: 'text', rows: 3, initialValue: 'Stories, culture, and ideas that shape our world.'}),
+    defineField({name: 'heroImage', title: 'Hero image', type: 'image', options: {hotspot: true}, fields: [defineField({name: 'alt', title: 'Alt text', type: 'string'})]}),
+    defineField({name: 'heroLink', title: 'Hero link', type: 'url'}),
     defineField({name: 'featuredStories', title: 'Featured hero stories', type: 'array', of: [defineArrayMember({type: 'reference', to: [{type: 'article'}]})], validation: (rule) => rule.max(5)}),
     defineField({name: 'secondaryStory', title: 'Secondary featured story', type: 'reference', to: [{type: 'article'}]}),
     defineField({name: 'latestCount', title: 'Number of latest stories', type: 'number', initialValue: 8, validation: (rule) => rule.min(1).max(24)}),

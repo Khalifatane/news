@@ -23,7 +23,7 @@ async function CachedHome({perspective, stega}: DynamicFetchOptions) {
   const secondary = home.secondary || featured[1] || articles[1] || fallbackArticles[1]
   const next = featured[1] || secondary || articles[1] || fallbackArticles[1]
   const trending = Array.isArray(home.trending) && home.trending.filter(Boolean).length ? home.trending.filter(Boolean) : articles.slice(2, 8)
-  const publicationName = home.publicationName || 'NEWSLETTER'
+  const publicationName = home.publicationName || 'Sunu Ndar'
   const latestCount = Number(home.latestCount) || 8
 
   if (!articles.length && !hero) {
@@ -62,19 +62,22 @@ async function CachedHome({perspective, stega}: DynamicFetchOptions) {
           </Link>
           <div className="feature-side">
             {next && (
-              <Link href={href(next)} className="side-story">
-                {next.coverImage && <NewsletterImage image={next.coverImage} alt={next.title || 'Story cover'} className="card-image" />}
-                <div>
+              <Link href={href(next)} className="side-story side-story--feature">
+                <div className="side-story-media">
+                  {next.coverImage && <NewsletterImage image={next.coverImage} alt={next.title || 'Story cover'} className="card-image" />}
+                </div>
+                <div className="side-story-copy">
                   <p>{next.excerpt}</p>
                   <h2>{next.title}</h2>
                 </div>
               </Link>
             )}
             {secondary && (
-              <Link href={href(secondary)} className="side-story">
+              <Link href={href(secondary)} className="trend-item trend-item--feature">
                 {secondary.coverImage && <NewsletterImage image={secondary.coverImage} alt={secondary.title || 'Story cover'} className="card-image" />}
                 <div>
-                  <h2>{secondary.title}</h2>
+                  <h3>{secondary.title}</h3>
+                  <p>{secondary.excerpt}</p>
                   <small>{byline(secondary)}</small>
                 </div>
               </Link>

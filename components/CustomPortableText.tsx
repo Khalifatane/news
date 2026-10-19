@@ -9,6 +9,7 @@ import Link from 'next/link'
 
 import ImageBox from '@/components/ImageBox'
 import {TimelineSection} from '@/components/TimelineSection'
+import {VideoEmbed} from '@/components/VideoEmbed'
 
 export function CustomPortableText({
   id,
@@ -62,6 +63,9 @@ export function CustomPortableText({
             <figcaption className="font-sans text-sm text-gray-600">{image.caption}</figcaption>
           )}
         </figure>
+      ),
+      videoEmbed: ({value: video}) => (
+        <VideoEmbed url={video.url} caption={video.caption} captionsUrl={video.captionsUrl} />
       ),
       timeline: ({value: timeline}) => {
         const {items, _key} = timeline

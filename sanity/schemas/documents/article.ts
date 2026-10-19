@@ -1,6 +1,7 @@
 import {DocumentTextIcon} from '@sanity/icons/DocumentText'
 import {ImageIcon} from '@sanity/icons/Image'
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {videoEmbed} from '@/sanity/schemas/objects/videoEmbed'
 
 const inlineImage = defineArrayMember({
   name: 'inlineImage', title: 'Inline image', type: 'object', icon: ImageIcon,
@@ -23,7 +24,7 @@ export default defineType({
     defineField({name: 'readingTime', title: 'Reading time (minutes)', type: 'number', group: 'editorial', initialValue: 3, validation: (rule) => rule.min(1).required()}),
     defineField({name: 'coverImage', title: 'Cover image', type: 'image', group: 'editorial', options: {hotspot: true}, fields: [defineField({name: 'alt', title: 'Alternative text', type: 'string', validation: (rule) => rule.required()})]}),
     defineField({name: 'excerpt', title: 'Summary / excerpt', type: 'text', rows: 3, group: 'editorial', validation: (rule) => rule.required().max(280)}),
-    defineField({name: 'body', title: 'Article body', type: 'array', group: 'editorial', of: [defineArrayMember({type: 'block', styles: [{title: 'Normal', value: 'normal'}, {title: 'Heading', value: 'h2'}, {title: 'Quote', value: 'blockquote'}], marks: {annotations: [{name: 'link', type: 'object', title: 'Link', fields: [defineField({name: 'href', title: 'URL', type: 'url'})]}]}}), inlineImage]}),
+    defineField({name: 'body', title: 'Article body', type: 'array', group: 'editorial', of: [defineArrayMember({type: 'block', styles: [{title: 'Normal', value: 'normal'}, {title: 'Heading', value: 'h2'}, {title: 'Quote', value: 'blockquote'}], marks: {annotations: [{name: 'link', type: 'object', title: 'Link', fields: [defineField({name: 'href', title: 'URL', type: 'url'})]}]}}), inlineImage, videoEmbed]}),
     defineField({name: 'featured', title: 'Featured story', type: 'boolean', group: 'editorial', initialValue: false}),
     defineField({name: 'trending', title: 'Trending story', type: 'boolean', group: 'editorial', initialValue: false}),
     defineField({name: 'seoTitle', title: 'SEO title', type: 'string', group: 'seo', validation: (rule) => rule.max(60)}),
